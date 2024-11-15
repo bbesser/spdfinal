@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Create Community Event</h1>
+    
+    <form action="{{ url_for('create_event') }}" method="post" enctype="multipart/form-data" class="p-4 shadow-sm bg-white rounded">
+        <!-- Event Title -->
+        <div class="mb-3">
+            <label for="title" class="form-label">Event Title</label>
+            <input type="text" id="title" name="title" class="form-control" placeholder="Enter event title" required>
+        </div>
+
+        <!-- Date and Time -->
+        <div class="row mb-3">
+            <div class="col">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" id="date" name="date" class="form-control" required>
+            </div>
+            <div class="col">
+                <label for="time" class="form-label">Time</label>
+                <input type="time" id="time" name="time" class="form-control">
+            </div>
+        </div>
+
+        <!-- Location -->
+        <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" id="location" name="location" class="form-control" placeholder="Enter event location" required>
+        </div>
+
+        <!-- Category -->
+        <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <select id="category" name="category" class="form-select" required>
+                <option value="" disabled selected>Select a category</option>
+                <option value="Gardening">Gardening</option>
+                <option value="Sports">Sports</option>
+                <option value="Meetings">Meetings</option>
+                <option value="Workshops">Workshops</option>
+                <!-- Add more categories as needed -->
+            </select>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" name="description" class="form-control" rows="4" placeholder="Enter event description" required></textarea>
+        </div>
+
+        <!-- Event Image Upload -->
+        <div class="mb-3">
+            <label for="event_image" class="form-label">Event Image</label>
+            <input type="file" id="event_image" name="event_image" class="form-control" accept="image/*">
+        </div>
+
+        <!-- Submit Button -->
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-dark">Create Event</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

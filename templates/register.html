@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-5 shadow-sm" style="max-width: 400px; width: 100%;">
+        <h2 class="text-center font-weight-bold mb-4">Create an Account</h2>
+        
+        <!-- Display Error Message -->
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+        
+        <form action="{{ url_for('register') }}" method="post" enctype="multipart/form-data" onsubmit="return validatePassword()">
+            <!-- Name Input -->
+            <div class="form-group">
+                <input type="text" name="name" class="form-control" placeholder="Name" required>
+            </div>
+
+            <!-- Email Input -->
+            <div class="form-group">
+                <input type="email" name="email" class="form-control" placeholder="Email address" required>
+            </div>
+
+            <!-- Password Input -->
+            <div class="form-group">
+                <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
+                <small id="passwordHelp" class="form-text text-muted">
+                    Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, one digit, and one special character.
+                </small>
+            </div>
+
+            <!-- Profile Image Upload -->
+            <!-- Profile Image Upload -->
+            <div class="form-group">
+                <label for="profile_image" class="text-muted">Upload Profile Image (Optional)</label>
+                <input type="file" name="profile_image" id="profile_image" class="form-control-file" accept="image/*">
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-dark btn-block">
+                <i class="fas fa-user-plus"></i> Register
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function validatePassword() {
+        const password = document.getElementById('password').value;
+        const passwordHelp = document.getElementById('passwordHelp');
+
+        // Regular expression for password requirements
+        const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+        if (!regex.test(password)) {
+            passwordHelp.classList.add('text-danger');
+            passwordHelp.textContent = 'Password does not meet the requirements!';
+            return false;
+        }
+
+        passwordHelp.classList.remove('text-danger');
+        return true;
+    }
+</script>
+{% endblock %}

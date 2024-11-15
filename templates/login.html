@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-5 shadow-sm" style="max-width: 400px; width: 100%;">
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <h2 class="text-center font-weight-bold mb-4">Sign in to your account</h2>
+        <form action="{{ url_for('login') }}" method="post">
+            <!-- Email Input -->
+            <div class="form-group">
+                <input type="email" name="email" class="form-control" placeholder="Email address" required>
+            </div>
+
+            <!-- Password Input -->
+            <div class="form-group">
+                <input type="password" name="password" class="form-control" placeholder="Password" required>
+            </div>
+
+            <!-- Remember Me and Forgot Password -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="rememberMe">
+                    <label class="form-check-label" for="rememberMe">Remember me</label>
+                </div>
+                <a href="#" class="text-muted">Forgot your password?</a>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-dark btn-block">
+                <i class="fas fa-lock"></i> Sign in
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

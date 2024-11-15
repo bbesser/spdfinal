@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">Dashboard</h1>
+        <div class="dropdown">
+            <a class="btn btn-light position-relative" href="#" role="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1.5rem;">
+                <i class="fas fa-envelope"></i>
+                {% if unread_notifications > 0 %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="transform: translate(-50%, -50%); font-size: 0.75rem;">
+                    {{ unread_notifications }}
+                </span>
+                {% endif %}
+            </a>
+        
+            <!-- Dropdown Menu -->
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown" style="width: 300px;">
+                <li><h6 class="dropdown-header">Notifications</h6></li>
+                {% if notifications %}
+                    {% for notification in notifications %}
+                        <li class="dropdown-item text-wrap">
+                            <small>{{ notification.timestamp }}</small><br>
+                            {{ notification.message }}
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="dropdown-item text-muted">No new notifications</li>
+                {% endif %}
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-center" href="{{ url_for('notifications') }}">View All Notifications</a></li>
+            </ul>
+        </div>        
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="row">
+        <!-- Your Resources Section -->
+        <div class="col-md-8 mb-4">
+            <div class="card shadow-sm p-4">
+                <h5 class="font-weight-bold">Your Resources</h5>
+                <ul class="list-unstyled mt-3">
+                    {% for resource in resources %}
+                    <li class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <strong>{{ resource['title'] }}</strong>
+                            <p class="text-muted mb-0">Listed on: {{ resource['date_posted'] }}</p>
+                        </div>
+                        <div>
+                            <a href="{{ url_for('edit_resource', resource_id=resource['resource_id']) }}" class="text-primary mr-2">Edit</a>
+                            <a href="{{ url_for('delete_resource', resource_id=resource['resource_id']) }}" class="text-danger">Delete</a>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <a href="{{ url_for('add_resource') }}" class="btn btn-dark btn-sm mt-3">+ Add New Resource</a>
+            </div>
+        </div>
+
+        <!-- Reviews About Your Products Section -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm p-4" style="max-height: 400px; overflow-y: auto;">
+                <h5 class="font-weight-bold">Product Reviews</h5>
+                <ul class="list-unstyled mt-3">
+                    {% if reviews %}
+                        {% for review in reviews %}
+                        <li class="mb-3">
+                            <strong>{{ review['resource_title'] }}</strong>
+                            <p>Reviewed by <strong>{{ review['reviewer_name'] }}</strong></p>
+                            <div class="text-warning mb-1">
+                                {% for i in range(1, 6) %}
+                                    <i class="fas fa-star{% if i > review['rating'] %}-o{% endif %}"></i>
+                                {% endfor %}
+                                <span class="text-muted">({{ review['rating'] }}/5)</span>
+                            </div>
+                            <p class="text-muted mb-0">{{ review['comment'] }}</p>
+                            <p class="text-muted small">{{ review['timestamp'] }}</p>
+                        </li>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No reviews available for your products.</p>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Reservation Details Section -->
+        <div class="col-md-8 mb-4">
+            <div class="card shadow-sm p-4">
+                <h5 class="font-weight-bold">Your Reservations</h5>
+                <ul class="list-unstyled mt-3">
+                    {% for reservation in reservations %}
+                    <li class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <strong>{{ reservation['title'] }}</strong>
+                            <p class="text-muted mb-0">From: {{ reservation['start_date'] }} to {{ reservation['end_date'] }}</p>
+                        </div>
+                        <div class="d-flex custom-gap">
+                            <a href="{{ url_for('resource_reviews', resource_id=reservation['resource_id']) }}" class="btn btn-outline-primary btn-sm">Leave a Review</a>
+                            <form action="{{ url_for('cancel_booking', booking_id=reservation['booking_id']) }}" method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-danger btn-sm">Cancel Reservation</button>
+                            </form>
+                        </div>                                                 
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- RSVP-ed Events Section -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm p-4">
+                <h5 class="font-weight-bold">Your Events</h5>
+                <ul class="list-unstyled mt-3">
+                    {% for rsvp in rsvps %}
+                    <li class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <strong>{{ rsvp['title'] }}</strong>
+                            <p class="text-muted mb-0">Date: {{ rsvp['date'] }} | Location: {{ rsvp['location'] }}</p>
+                        </div>
+                        <form action="{{ url_for('cancel_rsvp', event_id=rsvp['event_id']) }}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-link text-danger p-0">Cancel RSVP</button>
+                        </form>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages Section - Full Width at the Bottom -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card shadow-sm p-4">
+                <h5 class="font-weight-bold">Messages</h5>
+                <ul class="list-unstyled mt-3">
+                    {% for conversation in conversations %}
+                    <li class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                        <a href="{{ url_for('view_conversation', receiver_id=conversation['receiver_id']) }}" class="text-dark">
+                            <strong>{{ conversation['name'] }}</strong>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <a href="{{ url_for('messages') }}" class="btn btn-dark btn-sm mt-4">View All Messages</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

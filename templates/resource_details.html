@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4"><strong>{{ resource['title'] }}</strong></h1>
+
+    <div class="row">
+        <!-- Left Section: Images and Item Description -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                {% if resource['images'] %}
+                    <img src="{{ url_for('static', filename='uploads/' ~ resource['images']) }}" class="card-img-top" alt="Main Image">
+                {% else %}
+                    <div class="card-body text-center" style="height: 300px; background-color: #e9ecef;">
+                        <span>Main Image</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Item Description -->
+            <h4><strong>Description:</strong></h4>
+            <p>{{ resource['description'] }}</p>
+            <h4><strong>Pickup Location</strong></h4>
+            <p>{{ resource['pickup_location'] }}</p>
+        </div>
+
+        <!-- Right Section: Availability, Contact, and Reserve -->
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="font-weight-bold">Availability</h5>
+                    <!-- Inline Calendar Container -->
+                    <div id="calendar"></div>
+                    <p id="availabilityMessage" class="text-danger mt-2" style="display:none;">Selected dates are unavailable. Please choose a different range.</p>
+                </div>
+            </div>
+
+            <!-- Contact Owner -->
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    {% if owner['profile_image'] %}
+                        <img src="{{ url_for('static', filename='uploads/' ~ owner['profile_image']) }}" class="rounded-circle mb-2" alt="Owner" width="60">
+                    {% endif %}
+                    <h5>{{ owner['name'] }}</h5>
+                    <p><strong>Reputation:</strong> <span class="text-primary">{{ average_rating }} </span>
+                        {% for i in range(1, 6) %}
+                            {% if i <= average_rating %}
+                                <i class="fas fa-star"></i>
+                            {% elif (i - 1) < average_rating < i %}
+                                <i class="fas fa-star-half-alt"></i>
+                            {% else %}
+                                <i class="far fa-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </p>
+                    <form action="{{ url_for('send_message') }}" method="POST">
+                        <input type="hidden" name="receiver_id" value="{{ owner_user_id }}">
+                        <div class="form-group">
+                            <label for="messageContent">Message Owner:</label>
+                            <textarea class="form-control" id="messageContent" name="content" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary btn-block">Send Message</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Reserve Button -->
+            <button type="submit" form="bookingForm" class="btn btn-dark btn-block">Reserve Now</button>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <h3>Reviews</h3>
+        {% if reviews %}
+            {% for review in reviews %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ review['reviewer_name'] }}</h5>
+                    
+                    <!-- Star Rating Display -->
+                    <div class="text-warning mb-1">
+                        {% for i in range(1, 6) %}
+                            <i class="fas fa-star{% if i > review['rating'] %}-o{% endif %}"></i>
+                        {% endfor %}
+                    </div>
+                    
+                    <p class="card-text">{{ review['comment'] }}</p>
+                    <p class="card-text"><small class="text-muted">{{ review['timestamp'] }}</small></p>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No reviews yet. Be the first to leave a review!</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Booking Form -->
+<form id="bookingForm" action="{{ url_for('resource_details', resource_id=resource['resource_id']) }}" method="POST">
+    {% if csrf_token %}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% endif %}
+    <input type="hidden" id="start_date" name="start_date">
+    <input type="hidden" id="end_date" name="end_date">
+</form>
+
+<div id="unavailableDatesData" data-unavailable-dates='{{ unavailable_dates | tojson | default("[]") }}'></div>
+
+<!-- Include Flatpickr JavaScript and Initialize -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<style>
+    /* Custom styles for the calendar to fit the card */
+    #calendar {
+        width: 100%;
+    }
+
+    .flatpickr-calendar {
+        width: 100% !important;
+        max-width: 100%;
+    }
+
+    .flatpickr-calendar.inline {
+        box-shadow: none;  /* Removes extra shadow */
+    }
+
+    .flatpickr-innerContainer {
+        display: flex;
+        justify-content: center;
+    }
+
+    .flatpickr-months {
+        width: 100%;
+    }
+
+    .flatpickr-weekdays,
+    .flatpickr-days {
+        width: 100%;
+    }
+</style>
+
+<script>
+    const unavailableDates = JSON.parse(document.getElementById("unavailableDatesData").getAttribute("data-unavailable-dates"));
+    const availabilityMessage = document.getElementById("availabilityMessage");
+
+    // Convert unavailable dates into ranges for Flatpickr
+    const unavailableRanges = [];
+    for (let i = 0; i < unavailableDates.length; i += 2) {
+        unavailableRanges.push({
+            from: unavailableDates[i], 
+            to: unavailableDates[i + 1]
+        });
+    }
+
+    // Initialize Flatpickr for Inline Calendar
+    flatpickr("#calendar", {
+        mode: "range",
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        disable: unavailableRanges,
+        inline: true,  // Display as inline calendar
+        onChange: function(selectedDates) {
+            if (selectedDates.length === 2) {
+                const startDate = selectedDates[0];
+                const endDate = selectedDates[1];
+                
+                document.getElementById("start_date").value = startDate.toISOString().split('T')[0];
+                document.getElementById("end_date").value = endDate.toISOString().split('T')[0];
+
+                // Check if the selected range overlaps with unavailable ranges
+                const isUnavailable = unavailableRanges.some(range => 
+                    (startDate <= new Date(range.to) && endDate >= new Date(range.from))
+                );
+
+                if (isUnavailable) {
+                    availabilityMessage.style.display = 'block';
+                    // Clear selected dates if not allowed
+                    this.clear();
+                } else {
+                    availabilityMessage.style.display = 'none';
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

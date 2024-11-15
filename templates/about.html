@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Main Heading -->
+    <h1 class="text-center">About Smart Neighborhood Exchange</h1>
+    <p class="text-center lead mt-3">
+        Empowering sustainability and connection through seamless resource sharing and community engagement.
+    </p>
+
+    <!-- Mission and Vision Section -->
+    <div class="row mt-5">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm p-4 text-center">
+                <h4 class="font-weight-bold">Our Mission</h4>
+                <p>
+                    To build a sustainable, connected community where neighbors can share resources and create lasting bonds through shared experiences and events.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm p-4 text-center">
+                <h4 class="font-weight-bold">Our Vision</h4>
+                <p>
+                    A world where communities are connected, sustainable, and empowered to reduce waste through resourcefulness and mutual support.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Meet Our Team Section -->
+    <h2 class="text-center mt-5">Meet Our Team</h2>
+    <div class="row text-center mt-4">
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm p-3">
+                <img src="{{ url_for('static', filename='images/derek.png.jpg') }}" class="img-fluid rounded-circle mb-2" alt="Team Member 1">
+                <h5>Derek Mount</h5>
+                <p class="text-muted">CEO & Founder</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm p-3">
+                <img src="{{ url_for('static', filename='images/sidd.png') }}" class="img-fluid rounded-circle mb-2" alt="Team Member 2">
+                <h5>Sidd Kaza</h5>
+                <p class="text-muted">CTO</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm p-3">
+                <img src="{{ url_for('static', filename='images/abhay.png.jpg') }}" class="img-fluid rounded-circle mb-2" alt="Team Member 3">
+                <h5>Abhay Chaudhary</h5>
+                <p class="text-muted">Head of Design</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm p-3">
+                <img src="{{ url_for('static', filename='images/bodee.png') }}" class="img-fluid rounded-circle mb-2" alt="Team Member 4">
+                <h5>Bodee Besser</h5>
+                <p class="text-muted">Lead Developer</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Milestones Section -->
+    <h2 class="text-center mt-5">Our Milestones</h2>
+    <div class="row mt-4">
+        <div class="col-md-4 mb-4">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-rocket fa-2x text-primary mr-3"></i>
+                <div>
+                    <h5 class="font-weight-bold">2023: Launched</h5>
+                    <p>Our journey began with the vision to build stronger, more sustainable communities.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-users fa-2x text-primary mr-3"></i>
+                <div>
+                    <h5 class="font-weight-bold">2024: 1,000 Users</h5>
+                    <p>We reached our first 1,000 users, creating a vibrant and supportive community.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-award fa-2x text-primary mr-3"></i>
+                <div>
+                    <h5 class="font-weight-bold">2025: Community Impact Award</h5>
+                    <p>Recognized for outstanding contributions to community sustainability.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action Section -->
+    <div class="text-center mt-5 p-4 bg-light rounded shadow-sm">
+        <h3>Join the Smart Neighborhood Community</h3>
+        <p>Be part of our journey to create sustainable, connected neighborhoods.</p>
+        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">Get Started</a>
+    </div>
+</div>
+{% endblock %}

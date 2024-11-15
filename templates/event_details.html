@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>{{ event['title'] }}</h1>
+    <p><strong>Date:</strong> {{ event['date'] }}{% if event['time'] %} at {{ event['time'] }}{% endif %}</p>
+    <p><strong>Location:</strong> {{ event['location'] }}</p>
+    <p><strong>Description:</strong> {{ event['description'] }}</p>
+    <p><strong>Organizer:</strong> {{ event['organizer_name'] }}</p>
+
+    <!-- Display attendee count -->
+    <p><strong>Attendees:</strong> {{ attendee_count }}</p>
+
+    <!-- RSVP Button -->
+    {% if not user_rsvp %}
+        <form action="{{ url_for('event_details', event_id=event['event_id']) }}" method="post">
+            <button type="submit" class="btn btn-primary">RSVP</button>
+        </form>
+    {% else %}
+        <p class="text-success">You have RSVP'd to this event.</p>
+    {% endif %}
+
+    <!-- Messaging Section -->
+    <div class="mt-4">
+        <h5>Contact Organizer</h5>
+        <form action="{{ url_for('send_message') }}" method="POST">
+            <input type="hidden" name="receiver_id" value="{{ event['organizer_id'] }}"> <!-- Organizer's user ID -->
+    
+            <div class="form-group">
+                <label for="messageContent">Type your message:</label>
+                <textarea class="form-control" id="messageContent" name="content" required></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Send Message</button>
+        </form>
+    </div>    
+    
+    <a href="{{ url_for('community_events') }}" class="btn btn-secondary mt-3">Back to Events</a>
+</div>
+{% endblock %}

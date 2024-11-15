@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Reservation Details</h1>
+
+    <div class="row">
+        <!-- Left Section: Resource Information -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="font-weight-bold">{{ resource.title }}</h4>
+                    <p>{{ resource.description }}</p>
+                    <p>Rental Period: {{ start_date }} - {{ end_date }}</p>
+                    <p>Total Days: {{ total_days }}</p>
+                    <p>Total Cost: ${{ total_cost }} ({{ daily_rate }} per day)</p>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5>Pickup and Return Instructions</h5>
+                    <p>Please pick up and return the equipment at the following address:</p>
+                    <p><strong>Address:</strong> {{ resource.pickup_location }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Section: Owner Information and Reservation Summary -->
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <!-- Display profile image, defaulting to 'default_profile.jpg' if owner.profile_image is missing -->
+                    <img src="{{ url_for('static', filename='uploads/' ~ (owner.profile_image or 'default_profile.jpg')) }}" 
+                         class="rounded-circle mb-3" alt="Owner" width="60">
+                    <h5>{{ owner.name }}</h5>
+                    <p><strong>Contact:</strong> {{ owner.email }}</p>
+                    <form action="{{ url_for('send_message') }}" method="POST">
+                        <input type="hidden" name="receiver_id" value="{{ owner_user_id }}">
+                        <div class="form-group">
+                            <label for="messageContent">Message Owner:</label>
+                            <textarea class="form-control" id="messageContent" name="content" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary btn-block">Send Message</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="font-weight-bold">Reservation Summary</h5>
+                    <p>Rental Fee ({{ total_days }} days): ${{ total_cost }}</p>
+                    <p>Service Fee: $30</p>
+                    <p>Insurance: $20</p>
+                    <h5>Total: ${{ total_cost + 30 + 20 }}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <h5>Cancellation Policy</h5>
+        <p>Free cancellation up to 48 hours before the rental start time. After that, a cancellation fee of 50% of the total rental cost will be charged.</p>
+        
+        <!-- Confirm Reservation Button -->
+        <div class="mt-4">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-success">Confirm Reservation</a>
+        </div>
+
+        <!-- Form to handle cancellation -->
+        <div class="mt-4">
+            <form action="{{ url_for('cancel_booking', booking_id=booking_id) }}" method="post" style="display: inline;">
+                <button type="submit" class="btn btn-danger">Cancel Reservation</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Community Resources</h1>
+
+    <!-- Search and Filter Form -->
+    <style>
+        /* Style for the select dropdowns */
+        .form-select {
+            height: 45px;
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+            background-color: #f8f9fa;
+        }
+    
+        /* Styling the options within the dropdowns */
+        .form-select option {
+            background-color: #f8f9fa;
+            color: #495057;
+            padding: 8px;
+        }
+    
+        /* Adding a hover effect to options */
+        .form-select option:hover {
+            background-color: #e2e6ea;
+        }
+    </style>
+    
+    <form action="{{ url_for('resources') }}" method="post" class="d-flex align-items-center mb-4 p-3 rounded border bg-light shadow-sm" style="max-width: 100%;">
+        <select name="category" class="form-select me-2" style="flex: 1;">
+            <option value="">All Categories</option>
+            <option value="Books" {% if category == "Books" %}selected{% endif %}>Books</option>
+            <option value="Tools" {% if category == "Tools" %}selected{% endif %}>Tools</option>
+            <option value="Electronics" {% if category == "Electronics" %}selected{% endif %}>Electronics</option>
+            <option value="Other" {% if category == "Other" %}selected{% endif %}>Other</option>
+        </select>
+    
+        <select name="location" class="form-select me-2" style="flex: 1;">
+            <option value="">All Locations</option>
+            <option value="New York" {% if location == "New York" %}selected{% endif %}>New York</option>
+            <option value="San Francisco" {% if location == "San Francisco" %}selected{% endif %}>San Francisco</option>
+        </select>
+    
+        <input type="text" name="query" class="form-control me-2" placeholder="Search resources..." value="{{ query }}" style="flex: 2; height: 45px;">
+    
+        <button type="submit" class="btn btn-primary px-4" style="flex: 0.5; height: 45px;">Search</button>
+    </form>
+    
+    <!-- Resource Listings -->
+    <div class="row">
+        {% if resources %}
+            {% for resource in resources %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <!-- Image for Resource -->
+                    <img src="{{ url_for('static', filename='uploads/' ~ resource[4]) }}" class="card-img-top" alt="{{ resource[2] }}" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ resource[2] }}</h5> <!-- Title -->
+                        <p class="card-text">{{ resource[3] }}</p> <!-- Description -->
+                        <p class="text-muted mb-0"><strong>Availability:</strong> {{ resource[6] }}</p> <!-- Availability -->
+                        <a href="{{ url_for('resource_details', resource_id=resource[0]) }}" class="text-primary float-end mt-2">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center">No resources found. Try adjusting your search criteria.</p>
+        {% endif %}
+    </div>
+
+    <!-- Pagination (if applicable) -->
+    <nav aria-label="Resource pagination" class="d-flex justify-content-center mt-4">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item disabled"><span class="page-link">...</span></li>
+            <li class="page-item"><a class="page-link" href="#">10</a></li>
+        </ul>
+    </nav>
+</div>
+{% endblock %}
