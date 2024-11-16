@@ -18,7 +18,7 @@ RUN pip install -r requirements.txt
 # Step 5: Copy the rest of the application code into the container
 # This step copies all the remaining files in the current directory to the /app directory in the container
 COPY . .
-
+EXPOSE 5000
 # Step 6: Set the command to run the application
 # The CMD instruction specifies what command to run within the container when it starts
 CMD ["python", "app.py"]

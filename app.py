@@ -80,7 +80,7 @@ def init_db():
             time TEXT,
             FOREIGN KEY (user_id) REFERENCES Users(user_id)
         )''')
-        
+
          # Add EventRSVPs table
         c.execute('''CREATE TABLE IF NOT EXISTS EventRSVPs (
             rsvp_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -1055,5 +1055,8 @@ def cancel_rsvp(event_id):
     return redirect(url_for('dashboard'))
 
 # Run the application
+# if __name__ == '__main__':
+#     app.run(debug=True)
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
