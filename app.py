@@ -80,7 +80,7 @@ def init_db():
             time TEXT,
             FOREIGN KEY (user_id) REFERENCES Users(user_id)
         )''')
-
+        
          # Add EventRSVPs table
         c.execute('''CREATE TABLE IF NOT EXISTS EventRSVPs (
             rsvp_id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -46,16 +46,21 @@
                             <strong>{{ resource['title'] }}</strong>
                             <p class="text-muted mb-0">Listed on: {{ resource['date_posted'] }}</p>
                         </div>
-                        <div>
+                        <div class="d-flex align-items-center">
                             <a href="{{ url_for('edit_resource', resource_id=resource['resource_id']) }}" class="text-primary mr-2">Edit</a>
-                            <a href="{{ url_for('delete_resource', resource_id=resource['resource_id']) }}" class="text-danger">Delete</a>
+                            <!-- Delete form -->
+                            <form action="{{ url_for('delete_resource', resource_id=resource['resource_id']) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-link text-danger p-0" onclick="return confirm('Are you sure you want to delete this resource?');">
+                                    Delete
+                                </button>
+                            </form>
                         </div>
                     </li>
                     {% endfor %}
                 </ul>
                 <a href="{{ url_for('add_resource') }}" class="btn btn-dark btn-sm mt-3">+ Add New Resource</a>
             </div>
-        </div>
+        </div>        
 
         <!-- Reviews About Your Products Section -->
         <div class="col-md-4 mb-4">
